@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="LibreEcho is an open-source effort to give Amazon Echo Gen 2 hardware a useful life beyond its original software.">
+  <meta name="theme-color" content="#090b12">
+  <meta property="og:title" content="LibreEcho — Free the hardware">
+  <meta property="og:description" content="An open operating system and community-led hardware enablement project for Amazon Echo Gen 2.">
+  <meta property="og:image" content="assets/images/social-card.svg">
+  <title>LibreEcho — Free the hardware</title>
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="LibreEcho home">
+      <img src="assets/images/mark.svg" alt="" width="34" height="34">
+      <span>LibreEcho</span>
+    </a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-nav">Menu</button>
+    <nav id="primary-nav" class="primary-nav" aria-label="Primary navigation">
+      <a href="#mission">Mission</a>
+      <a href="#progress">Progress</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#contribute">Contribute</a>
+      <a class="button button-small" href="https://github.com/" data-repo-link>View on GitHub</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section id="top" class="hero section-shell">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="pulse"></span> Community hardware liberation project</p>
+        <h1>Free the hardware.<br><span>Keep the voice.</span></h1>
+        <p class="hero-lead">LibreEcho is building an open operating system for the Amazon Echo Gen 2—turning capable, locked-down hardware into a useful, hackable platform.</p>
+        <div class="hero-actions">
+          <a class="button" href="#progress">See current progress</a>
+          <a class="text-link" href="https://github.com/" data-repo-link>Explore the source <span aria-hidden="true">→</span></a>
+        </div>
+        <ul class="hero-stats" aria-label="Project highlights">
+          <li><strong>MT8163</strong><span>MediaTek platform</span></li>
+          <li><strong>Gen 2</strong><span>Initial hardware target</span></li>
+          <li><strong>Open</strong><span>Code and research</span></li>
+        </ul>
+      </div>
+      <div class="hero-art" aria-label="Stylised LibreEcho speaker illustration">
+        <div class="orb orb-one"></div>
+        <div class="orb orb-two"></div>
+        <img src="assets/images/echo-hero.svg" alt="A stylised tall smart speaker with an illuminated open-source ring">
+        <div class="status-card status-card-top"><span></span> Boot chain explored</div>
+        <div class="status-card status-card-bottom"><span></span> Bluetooth operational</div>
+      </div>
+    </section>
+
+    <section class="ticker" aria-label="Project principles">
+      <div>OPEN SOURCE <span>✦</span> REPAIRABLE <span>✦</span> LOCAL-FIRST <span>✦</span> COMMUNITY-LED <span>✦</span> HARDWARE REUSE <span>✦</span></div>
+    </section>
+
+    <section id="mission" class="section-shell split-section">
+      <div>
+        <p class="section-label">01 / Mission</p>
+        <h2>Perfectly good hardware should not become e-waste.</h2>
+      </div>
+      <div class="body-copy">
+        <p>Echo Gen 2 contains a capable processor, microphones, speakers, wireless connectivity and an expressive LED ring. LibreEcho aims to document the platform and replace the proprietary software stack with an open, maintainable alternative.</p>
+        <p>The objective is broader than a one-off hack: reproducible research, understandable tooling and a path that other devices can follow.</p>
+      </div>
+    </section>
+
+    <section id="progress" class="section-shell progress-section">
+      <div class="section-heading">
+        <div>
+          <p class="section-label">02 / Progress</p>
+          <h2>From black box to open platform.</h2>
+        </div>
+        <p>Hardware enablement is incremental. These milestones show the shape of the work without pretending the system is finished.</p>
+      </div>
+      <div class="progress-grid">
+        <article class="progress-card complete">
+          <div class="card-icon"><img src="assets/images/icon-boot.svg" alt=""></div>
+          <p class="state">Working</p>
+          <h3>Boot and recovery</h3>
+          <p>Custom kernels can boot with development access and a repeatable recovery route.</p>
+        </article>
+        <article class="progress-card complete">
+          <div class="card-icon"><img src="assets/images/icon-bluetooth.svg" alt=""></div>
+          <p class="state">Working</p>
+          <h3>Bluetooth transport</h3>
+          <p>The MediaTek connectivity path now completes Bluetooth function initialisation reliably.</p>
+        </article>
+        <article class="progress-card active">
+          <div class="card-icon"><img src="assets/images/icon-wifi.svg" alt=""></div>
+          <p class="state">In development</p>
+          <h3>Wi-Fi enablement</h3>
+          <p>Firmware loading and WMT integration are under active investigation and refinement.</p>
+        </article>
+        <article class="progress-card queued">
+          <div class="card-icon"><img src="assets/images/icon-audio.svg" alt=""></div>
+          <p class="state">Researching</p>
+          <h3>Audio and LED control</h3>
+          <p>Board-specific audio routing and a custom LED daemon are part of the next system layer.</p>
+        </article>
+      </div>
+      <p class="fine-print">Status reflects active development and may move quickly. See the repository for test evidence and the latest branch notes.</p>
+    </section>
+
+    <section id="architecture" class="architecture-section">
+      <div class="section-shell">
+        <p class="section-label">03 / Architecture</p>
+        <div class="architecture-grid">
+          <div>
+            <h2>A complete local-first stack.</h2>
+            <p class="body-copy">The intended system separates hardware enablement from user-facing services, allowing each layer to improve independently.</p>
+          </div>
+          <div class="stack" role="img" aria-label="LibreEcho software stack: applications, local voice services, system daemons, Linux kernel and Echo Gen 2 hardware">
+            <div><span>Applications</span><small>Home automation · media · utilities</small></div>
+            <div><span>Local voice services</span><small>Wake word · speech · intent routing</small></div>
+            <div><span>System services</span><small>Audio · LEDs · Bluetooth · Wi-Fi</small></div>
+            <div><span>Linux kernel</span><small>MT8163 · device tree · drivers</small></div>
+            <div class="hardware-layer"><span>Echo Gen 2 hardware</span><small>Microphones · speaker · LED ring · radios</small></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contribute" class="section-shell contribute-section">
+      <div class="contribute-art"><img src="assets/images/open-device.svg" alt="An exploded stylised speaker showing reusable hardware layers"></div>
+      <div>
+        <p class="section-label">04 / Contribute</p>
+        <h2>Help turn research into a usable system.</h2>
+        <p>Kernel developers, embedded Linux engineers, reverse engineers, designers, testers and technical writers all have something valuable to contribute.</p>
+        <div class="contribute-links">
+          <a class="button" href="https://github.com/" data-repo-link>Visit the repository</a>
+          <a class="text-link" href="https://github.com/" data-issues-link>Browse open issues <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer section-shell">
+    <div class="brand footer-brand"><img src="assets/images/mark.svg" alt="" width="30" height="30"><span>LibreEcho</span></div>
+    <p>An independent open-source project. Not affiliated with or endorsed by Amazon.</p>
+    <p>Built for hardware that deserves another life.</p>
+  </footer>
+  <script src="assets/js/site.js"></script>
+</body>
+</html>
