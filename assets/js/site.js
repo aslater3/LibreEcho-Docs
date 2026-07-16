@@ -1,5 +1,5 @@
 const configuration = {
-  repository: "https://github.com/YOUR-USERNAME/libreecho",
+  repository: "https://github.com/aslater3/LibreEcho-Docs-dev",
 };
 
 document.querySelectorAll("[data-repo-link]").forEach((link) => {
