@@ -6,10 +6,7 @@ Static GitHub Pages site for **LibreEcho**, an open operating system and hardwar
 
 1. Create an empty GitHub repository.
 2. Extract this archive and copy its contents into the repository root.
-3. Replace `YOUR-USERNAME/libreecho` in:
-   - `assets/js/site.js`
-   - `robots.txt`
-   - `sitemap.xml`
+3. The development repository is configured for `aslater3/LibreEcho-Docs-dev`. Update the repository and Pages URLs if you fork this project.
 4. Commit and push to the `main` branch.
 5. In **Settings → Pages**, select **GitHub Actions** as the source.
 
