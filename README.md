@@ -11,6 +11,9 @@ Static GitHub Pages site for **LibreEcho**, an open operating system and hardwar
 5. In **Settings → Pages**, select **GitHub Actions** as the source.
 
 The included workflow publishes the site automatically on every push to `main`.
+It also runs every six hours and checks out the latest public
+`aslater3/LibreEcho-UI` source to render the Control Centre screenshots shown
+on the site. A manual refresh is available from the workflow dispatch action.
 
 ## Custom domain
 
