@@ -13,7 +13,10 @@ Static GitHub Pages site for **LibreEcho**, an open operating system and hardwar
 The included workflow publishes the site automatically on every push to `main`.
 It also runs every six hours and checks out the latest public
 `aslater3/LibreEcho-UI` source to render the Control Centre screenshots shown
-on the site. A manual refresh is available from the workflow dispatch action.
+on the site. If the UI repository is private, add the existing fine-grained
+`UI_REPOSITORY_TOKEN` secret to this repository with read-only Contents access;
+without it, the last committed real screenshots are used as a deployment
+fallback. A manual refresh is available from the workflow dispatch action.
 
 ## Custom domain
 

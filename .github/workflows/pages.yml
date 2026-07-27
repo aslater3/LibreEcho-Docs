@@ -25,14 +25,19 @@ jobs:
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Check out latest UI source
+        id: ui_checkout
+        continue-on-error: true
         uses: actions/checkout@v4
         with:
           repository: aslater3/LibreEcho-UI
           ref: main
           path: ui-source
+          token: ${{ secrets.UI_REPOSITORY_TOKEN || github.token }}
       - name: Build UI demo
+        if: steps.ui_checkout.outcome == 'success'
         run: make -C ui-source -j2
       - name: Start UI demo server
+        if: steps.ui_checkout.outcome == 'success'
         run: |
           ./ui-source/build/libreecho-web --backend mock --web-root ./ui-source/web \
             --listen 127.0.0.1:18080 --mock-config ./ui-source/config/mock-state.json \
@@ -41,6 +46,7 @@ jobs:
           echo $! >"$RUNNER_TEMP/libreecho-demo.pid"
           for attempt in $(seq 1 20); do curl -fsS http://127.0.0.1:18080/ >/dev/null && break; sleep 1; done
       - name: Render current UI screenshots
+        if: steps.ui_checkout.outcome == 'success'
         run: |
           mkdir -p "$RUNNER_TEMP/ui-capture"
           npm --prefix "$RUNNER_TEMP/ui-capture" install --no-save playwright@1.52.0
