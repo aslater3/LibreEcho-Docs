@@ -6,7 +6,7 @@ Static GitHub Pages site for **LibreEcho**, an open operating system and hardwar
 
 1. Create an empty GitHub repository.
 2. Extract this archive and copy its contents into the repository root.
-3. The development repository is configured for `aslater3/LibreEcho-Docs-dev`. Update the repository and Pages URLs if you fork this project.
+3. This is the public product site. Development documentation and the browser demo live in `aslater3/LibreEcho-Docs-dev`.
 4. Commit and push to the `main` branch.
 5. In **Settings → Pages**, select **GitHub Actions** as the source.
 
@@ -47,4 +47,7 @@ Open `http://localhost:8000`.
 
 ## Project status language
 
-The progress cards are intentionally high-level. Update their wording in `index.html` as hardware enablement advances.
+The current project line is Linux 6.1 on MT8163 ARM32, with separate product
+tooling and UI repositories. It is active development, not a stable public OTA
+release. Keep this site high-level and do not publish device identifiers,
+private run manifests, serials, MAC addresses, or local paths.
