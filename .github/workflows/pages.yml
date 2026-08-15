@@ -73,7 +73,7 @@ jobs:
       - name: Stage only the site for Pages
         run: |
           mkdir -p "$RUNNER_TEMP/site"
-          rsync -a --exclude='.git' --exclude='ui-source' ./ "$RUNNER_TEMP/site/"
+          rsync -a --exclude='.git' --exclude='ui-source' --exclude='tests' --exclude='.github' ./ "$RUNNER_TEMP/site/"
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:

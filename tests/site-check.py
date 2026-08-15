@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 INDEX = ROOT / "index.html"
 CSS = ROOT / "assets/css/site.css"
 SCRIPT = ROOT / "assets/js/site.js"
+PAGES_WORKFLOW = ROOT / ".github/workflows/pages.yml"
 
 REQUIRED_IDS = {
     "top", "progress", "features", "hardware", "install", "demo",
@@ -64,6 +65,7 @@ def main():
     source = INDEX.read_text(encoding="utf-8")
     css = CSS.read_text(encoding="utf-8")
     script = SCRIPT.read_text(encoding="utf-8")
+    pages_workflow = PAGES_WORKFLOW.read_text(encoding="utf-8")
     parser = SiteParser()
     parser.feed(source)
     errors = []
@@ -136,6 +138,10 @@ def main():
         errors.append("mobile navigation is not visible by default before JavaScript enhancement")
     if ".js .menu-toggle{display:block;" not in css:
         errors.append("mobile menu toggle is not limited to the JavaScript-enhanced state")
+    if "--exclude='tests'" not in pages_workflow or "--exclude='.github'" not in pages_workflow:
+        errors.append("Pages artifact must exclude repository tests and workflow sources")
+    if "max-height:calc(100vh - 4.5rem)" not in css or "overflow-y:auto" not in css:
+        errors.append("no-JavaScript mobile navigation must scroll within the viewport")
 
     if errors:
         for error in errors:
