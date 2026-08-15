@@ -1,0 +1,111 @@
+#!/usr/bin/env python3
+"""Static contract checks for the public LibreEcho website."""
+from html.parser import HTMLParser
+from pathlib import Path
+import re
+import sys
+
+ROOT = Path(__file__).resolve().parents[1]
+INDEX = ROOT / "index.html"
+
+REQUIRED_IDS = {
+    "top", "progress", "features", "hardware", "install", "demo",
+    "privacy", "releases", "security", "licensing", "tester", "contribute",
+}
+REQUIRED_TEXT = [
+    "Developer Preview preparation",
+    "Open Beta has not launched",
+    "LibreEcho radar-puffin v0.1.0",
+    "libreecho-radar-puffin-v0.1.0-SHA256SUMS",
+    "physical mute is not a beta-supported privacy guarantee",
+    "browser-local simulation",
+]
+FORBIDDEN_TEXT = [
+    'href="https://github.com/"',
+    "/home/andy/",
+    "192.168.",
+    "10.0.",
+    "172.16.",
+    "G2A0RF",
+]
+
+class SiteParser(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.ids = set()
+        self.links = []
+        self.assets = []
+        self.text = []
+
+    def handle_starttag(self, tag, attrs):
+        attrs = dict(attrs)
+        if attrs.get("id"):
+            self.ids.add(attrs["id"])
+        if tag == "a" and attrs.get("href"):
+            self.links.append(attrs["href"])
+        if tag in {"img", "script", "link"}:
+            value = attrs.get("src") or attrs.get("href")
+            if value:
+                self.assets.append(value)
+
+    def handle_data(self, data):
+        self.text.append(data)
+
+
+def fail(message):
+    print(f"FAIL: {message}")
+    return 1
+
+
+def main():
+    source = INDEX.read_text(encoding="utf-8")
+    parser = SiteParser()
+    parser.feed(source)
+    errors = []
+
+    missing = REQUIRED_IDS - parser.ids
+    if missing:
+        errors.append(f"missing section ids: {', '.join(sorted(missing))}")
+
+    text = " ".join(parser.text)
+    for needle in REQUIRED_TEXT:
+        if needle not in text:
+            errors.append(f"missing required copy: {needle}")
+    for needle in FORBIDDEN_TEXT:
+        if needle in source:
+            errors.append(f"forbidden/private placeholder present: {needle}")
+
+    for href in parser.links:
+        if href.startswith("#"):
+            if href[1:] and href[1:] not in parser.ids:
+                errors.append(f"broken in-page link: {href}")
+        elif href.startswith(("assets/", "./")):
+            if not (ROOT / href.removeprefix("./")).is_file():
+                errors.append(f"missing linked local asset: {href}")
+
+    for asset in parser.assets:
+        if asset.startswith(("assets/", "./")) and not (ROOT / asset.removeprefix("./")).is_file():
+            errors.append(f"missing document asset: {asset}")
+
+    for expected in [
+        "libreecho-radar-puffin-v0.1.0-boot.img",
+        "libreecho-radar-puffin-v0.1.0.ota.tar",
+        "libreecho-radar-puffin-v0.1.0-SHA256SUMS",
+        "libreecho-radar-puffin-v0.1.0-ota-public-key.hex",
+    ]:
+        if expected not in source:
+            errors.append(f"release inventory omits {expected}")
+
+    if not re.search(r'<time datetime="2026-08-15">15 August 2026</time>', source):
+        errors.append("maintained review date is missing or inconsistent")
+
+    if errors:
+        for error in errors:
+            print(f"FAIL: {error}")
+        return 1
+    print(f"PASS: {INDEX} has {len(parser.ids)} ids, {len(parser.links)} links, and {len(parser.assets)} local asset references")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
