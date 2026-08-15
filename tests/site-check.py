@@ -76,16 +76,32 @@ def main():
     for needle in REQUIRED_TEXT:
         if needle not in text:
             errors.append(f"missing required copy: {needle}")
-    for needle in FORBIDDEN_TEXT:
-        if needle in source:
-            errors.append(f"forbidden/private placeholder present: {needle}")
-    for value in re.findall(r"(?<![\d.])(?:\d{1,3}\.){3}\d{1,3}(?![\d.])", source):
-        try:
-            address = ipaddress.ip_address(value)
-        except ValueError:
+    public_text = {INDEX: source}
+    text_suffixes = {".html", ".css", ".js", ".json", ".md", ".svg", ".xml", ".txt", ".yml", ".yaml"}
+    for path in ROOT.rglob("*"):
+        if not path.is_file() or path == Path(__file__) or path.suffix.lower() not in text_suffixes:
             continue
-        if address.is_private:
-            errors.append(f"private IPv4 address present: {value}")
+        if ".git" in path.parts or "tests" in path.parts or "ui-source" in path.parts:
+            continue
+        try:
+            public_text[path] = path.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            continue
+
+    mac_pattern = re.compile(r"(?<![0-9A-Fa-f])(?:[0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}(?![0-9A-Fa-f])")
+    for path, content in public_text.items():
+        for needle in FORBIDDEN_TEXT:
+            if needle in content:
+                errors.append(f"forbidden/private placeholder present in {path.relative_to(ROOT)}: {needle}")
+        for value in re.findall(r"(?<![\d.])(?:\d{1,3}\.){3}\d{1,3}(?![\d.])", content):
+            try:
+                address = ipaddress.ip_address(value)
+            except ValueError:
+                continue
+            if address.is_private and not address.is_loopback:
+                errors.append(f"private IPv4 address present in {path.relative_to(ROOT)}: {value}")
+        if mac_pattern.search(content):
+            errors.append(f"MAC address present in {path.relative_to(ROOT)}")
 
     for href in parser.links:
         if href.startswith("#"):
