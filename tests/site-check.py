@@ -142,6 +142,9 @@ def main():
         errors.append("mobile navigation is not visible by default before JavaScript enhancement")
     if ".js .menu-toggle{display:block;" not in css:
         errors.append("mobile menu toggle is not limited to the JavaScript-enhanced state")
+    docs_css = (ROOT / "assets/css/docs.css").read_text(encoding="utf-8")
+    if ".button-secondary" not in docs_css or "color:var(--text)!important" not in docs_css:
+        errors.append("secondary CTA must override the base button text colour")
     if "--exclude='tests'" not in pages_workflow or "--exclude='.github'" not in pages_workflow:
         errors.append("Pages artifact must exclude repository tests and workflow sources")
     if "max-height:calc(100vh - 4.5rem)" not in css or "overflow-y:auto" not in css:
