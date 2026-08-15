@@ -70,6 +70,15 @@ jobs:
       - name: Stop UI demo server
         if: always()
         run: test ! -f "$RUNNER_TEMP/libreecho-demo.pid" || kill "$(cat "$RUNNER_TEMP/libreecho-demo.pid")" || true
+      - name: Check generated UI artifacts for private strings
+        if: steps.ui_checkout.outcome == 'success'
+        run: |
+          for image in assets/images/ui-dashboard.png assets/images/ui-system.png; do
+            if strings "$image" | grep -Eiq '([0-9]{1,3}\.){3}[0-9]{1,3}|([0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}|/home/andy|G2A0RF'; then
+              echo "private-looking string found in $image" >&2
+              exit 1
+            fi
+          done
       - name: Stage only the site for Pages
         run: |
           mkdir -p "$RUNNER_TEMP/site"

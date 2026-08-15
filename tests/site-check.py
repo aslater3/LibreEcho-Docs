@@ -83,7 +83,7 @@ def main():
     for path in ROOT.rglob("*"):
         if not path.is_file() or path == Path(__file__) or path.suffix.lower() not in text_suffixes:
             continue
-        if ".git" in path.parts or "tests" in path.parts or "ui-source" in path.parts:
+        if ".git" in path.parts or ".github" in path.parts or "tests" in path.parts or "ui-source" in path.parts:
             continue
         try:
             public_text[path] = path.read_text(encoding="utf-8")
@@ -128,6 +128,10 @@ def main():
 
     if not re.search(r'<time datetime="2026-08-15">15 August 2026</time>', source):
         errors.append("maintained review date is missing or inconsistent")
+    if "releases/download/latest/" in source or "releases/download/v0.1.0/" not in source:
+        errors.append("release assets must use the immutable v0.1.0 tag")
+    if 'href="#security">Support</a>' not in source:
+        errors.append("header Support link must route to support guidance")
 
     # Mobile navigation must remain reachable when JavaScript is unavailable.
     if '<html lang="en-GB" class="no-js">' not in source:
