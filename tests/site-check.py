@@ -61,6 +61,32 @@ def fail(message):
     return 1
 
 
+IPV4_PATTERN = re.compile(r"(?<![\d.])(?:\d{1,3}\.){3}\d{1,3}(?![\d.])")
+# Keep this deliberately broad, then let ipaddress validate candidates.  This
+# catches compressed values such as fd12::1 and fe80::1 without treating CSS
+# hex colours, MAC addresses, or other colon-separated strings as addresses.
+IPV6_PATTERN = re.compile(
+    r"(?<![0-9A-Fa-f:])(?:[0-9A-Fa-f]{0,4}:){2,7}[0-9A-Fa-f]{0,4}(?![0-9A-Fa-f:])"
+)
+
+
+def private_ip_literals(content):
+    """Return non-loopback private IP literals embedded in *content*."""
+    values = list(IPV4_PATTERN.findall(content)) + list(IPV6_PATTERN.findall(content))
+    private = []
+    for value in values:
+        # A bare double colon is also the CSS pseudo-element selector.
+        if value == "::":
+            continue
+        try:
+            address = ipaddress.ip_address(value)
+        except ValueError:
+            continue
+        if address.is_private and not address.is_loopback:
+            private.append(value)
+    return private
+
+
 def main():
     source = INDEX.read_text(encoding="utf-8")
     css = CSS.read_text(encoding="utf-8")
@@ -96,13 +122,10 @@ def main():
         for needle in FORBIDDEN_TEXT:
             if needle in content:
                 errors.append(f"forbidden/private placeholder present in {path.relative_to(ROOT)}: {needle}")
-        for value in re.findall(r"(?<![\d.])(?:\d{1,3}\.){3}\d{1,3}(?![\d.])", content):
-            try:
-                address = ipaddress.ip_address(value)
-            except ValueError:
-                continue
-            if address.is_private and not address.is_loopback:
-                errors.append(f"private IPv4 address present in {path.relative_to(ROOT)}: {value}")
+        for value in private_ip_literals(content):
+            address = ipaddress.ip_address(value)
+            family = "IPv6" if address.version == 6 else "IPv4"
+            errors.append(f"private {family} address present in {path.relative_to(ROOT)}: {value}")
         if mac_pattern.search(content):
             errors.append(f"MAC address present in {path.relative_to(ROOT)}")
         if local_path_pattern.search(content):
@@ -169,6 +192,18 @@ def main():
         errors.append("Pages artifact must exclude repository tests and workflow sources")
     if "max-height:calc(100vh - 4.5rem)" not in css or "overflow-y:auto" not in css:
         errors.append("no-JavaScript mobile navigation must scroll within the viewport")
+
+    # The twelve-item header must collapse while the capped desktop container
+    # is still too narrow for its intrinsic contents. Keep the threshold
+    # explicit so regressions do not silently recreate the 1201px overflow.
+    if "@media(max-width:1320px)" not in css:
+        errors.append("full header must collapse through the 1320px breakpoint")
+    if "@media(max-width:1200px)" in css:
+        errors.append("header collapse breakpoint is too low for the capped container")
+    if ".primary-nav{display:flex;align-items:center;gap:1rem}" not in css:
+        errors.append("expanded navigation needs the compact desktop gap")
+    if ".primary-nav>a{color:var(--muted);text-decoration:none;font-size:.88rem}" not in css:
+        errors.append("expanded navigation needs compact link sizing")
 
     if errors:
         for error in errors:
