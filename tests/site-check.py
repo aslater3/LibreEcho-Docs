@@ -91,6 +91,7 @@ def main():
             continue
 
     mac_pattern = re.compile(r"(?<![0-9A-Fa-f])(?:[0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}(?![0-9A-Fa-f])")
+    local_path_pattern = re.compile(r"(?:/home/[^/\s]+(?:/[^\s]*)?|/Users/[^/\s]+(?:/[^\s]*)?|[A-Za-z]:\\Users\\[^\s]+)")
     for path, content in public_text.items():
         for needle in FORBIDDEN_TEXT:
             if needle in content:
@@ -104,6 +105,8 @@ def main():
                 errors.append(f"private IPv4 address present in {path.relative_to(ROOT)}: {value}")
         if mac_pattern.search(content):
             errors.append(f"MAC address present in {path.relative_to(ROOT)}")
+        if local_path_pattern.search(content):
+            errors.append(f"local filesystem path present in {path.relative_to(ROOT)}")
 
     for href in parser.links:
         if href.startswith("#"):
