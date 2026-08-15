@@ -1,3 +1,5 @@
+document.documentElement.classList.replace("no-js", "js");
+
 const configuration = {
   productRepository: "https://github.com/aslater3/LibreEcho",
   productIssues: "https://github.com/aslater3/LibreEcho/issues",

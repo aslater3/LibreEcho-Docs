@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 """Static contract checks for the public LibreEcho website."""
 from html.parser import HTMLParser
+import ipaddress
 from pathlib import Path
 import re
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 INDEX = ROOT / "index.html"
+CSS = ROOT / "assets/css/site.css"
+SCRIPT = ROOT / "assets/js/site.js"
 
 REQUIRED_IDS = {
     "top", "progress", "features", "hardware", "install", "demo",
@@ -59,6 +62,8 @@ def fail(message):
 
 def main():
     source = INDEX.read_text(encoding="utf-8")
+    css = CSS.read_text(encoding="utf-8")
+    script = SCRIPT.read_text(encoding="utf-8")
     parser = SiteParser()
     parser.feed(source)
     errors = []
@@ -74,6 +79,13 @@ def main():
     for needle in FORBIDDEN_TEXT:
         if needle in source:
             errors.append(f"forbidden/private placeholder present: {needle}")
+    for value in re.findall(r"(?<![\d.])(?:\d{1,3}\.){3}\d{1,3}(?![\d.])", source):
+        try:
+            address = ipaddress.ip_address(value)
+        except ValueError:
+            continue
+        if address.is_private:
+            errors.append(f"private IPv4 address present: {value}")
 
     for href in parser.links:
         if href.startswith("#"):
@@ -98,6 +110,16 @@ def main():
 
     if not re.search(r'<time datetime="2026-08-15">15 August 2026</time>', source):
         errors.append("maintained review date is missing or inconsistent")
+
+    # Mobile navigation must remain reachable when JavaScript is unavailable.
+    if '<html lang="en-GB" class="no-js">' not in source:
+        errors.append("document does not provide the no-js progressive-enhancement marker")
+    if 'document.documentElement.classList.replace("no-js", "js");' not in script:
+        errors.append("site script does not enable the JavaScript navigation state")
+    if ".primary-nav{display:flex;" not in css or ".js .primary-nav{display:none}" not in css:
+        errors.append("mobile navigation is not visible by default before JavaScript enhancement")
+    if ".js .menu-toggle{display:block;" not in css:
+        errors.append("mobile menu toggle is not limited to the JavaScript-enhanced state")
 
     if errors:
         for error in errors:
