@@ -41,6 +41,15 @@ class PrivateIpLiteralTests(unittest.TestCase):
             site_check.LOCAL_PATH_PATTERN.search("/home/alice/private/manifest.json")
         )
 
+    def test_rejects_generic_device_and_kernel_identifiers(self):
+        for value in (
+            "LibreEcho-12345",
+            "20260727T094130Z-7925b7c358fe",
+            "123e4567-e89b-12d3-a456-426614174000",
+        ):
+            self.assertIsNotNone(site_check.DEVICE_ID_PATTERN.search(value), value)
+        self.assertIsNotNone(site_check.KERNEL_ID_PATTERN.search("g7925b7c3-dirty"))
+
     def test_rendered_ui_gate_rejects_ipv6_ula_and_link_local_values(self):
         workflow = (site_check.ROOT / ".github/workflows/pages.yml").read_text(
             encoding="utf-8"

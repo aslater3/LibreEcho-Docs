@@ -74,6 +74,10 @@ MAC_PATTERN = re.compile(
 LOCAL_PATH_PATTERN = re.compile(
     r"(?:/home/[^/\s]+(?:/[^\s]*)?|/Users/[^/\s]+(?:/[^\s]*)?|[A-Za-z]:\\Users\\[^\s]+)"
 )
+DEVICE_ID_PATTERN = re.compile(
+    r"(?:LibreEcho[-_]\d{4,}|\b\d{8}T\d{6}Z-[0-9A-Fa-f]{8,}|\b[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12})"
+)
+KERNEL_ID_PATTERN = re.compile(r"\bg\w{7,}-dirty\b")
 
 
 def private_ip_literals(content):
@@ -140,6 +144,10 @@ def main():
             errors.append(f"MAC address present in {path.relative_to(ROOT)}")
         if LOCAL_PATH_PATTERN.search(content):
             errors.append(f"local filesystem path present in {path.relative_to(ROOT)}")
+        if DEVICE_ID_PATTERN.search(content):
+            errors.append(f"device/build identifier present in {path.relative_to(ROOT)}")
+        if KERNEL_ID_PATTERN.search(content):
+            errors.append(f"dirty kernel identifier present in {path.relative_to(ROOT)}")
 
     for href in parser.links:
         if href.startswith("#"):
@@ -202,6 +210,8 @@ def main():
         errors.append("Pages artifact must exclude repository tests and workflow sources")
     if "max-height:calc(100vh - 4.5rem)" not in css or "overflow-y:auto" not in css:
         errors.append("no-JavaScript mobile navigation must scroll within the viewport")
+    if ".hero-actions,.contribute-links{display:flex;align-items:center;gap:1.4rem;margin-top:2rem;flex-wrap:wrap}" not in css:
+        errors.append("desktop hero actions must wrap within the capped copy column")
 
     if errors:
         for error in errors:
