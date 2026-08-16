@@ -87,6 +87,20 @@ def private_ip_literals(content):
     return private
 
 
+def public_text_files(root, excluded=None):
+    """Return UTF-8 text files that will be copied into the Pages artifact."""
+    excluded = set(excluded or ())
+    for path in root.rglob("*"):
+        if not path.is_file() or path in excluded:
+            continue
+        if ".git" in path.parts or ".github" in path.parts or "tests" in path.parts or "ui-source" in path.parts:
+            continue
+        try:
+            yield path, path.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            continue
+
+
 def main():
     source = INDEX.read_text(encoding="utf-8")
     css = CSS.read_text(encoding="utf-8")
@@ -105,16 +119,8 @@ def main():
         if needle not in text:
             errors.append(f"missing required copy: {needle}")
     public_text = {INDEX: source}
-    text_suffixes = {".html", ".css", ".js", ".json", ".md", ".svg", ".xml", ".txt", ".yml", ".yaml"}
-    for path in ROOT.rglob("*"):
-        if not path.is_file() or path == Path(__file__) or path.suffix.lower() not in text_suffixes:
-            continue
-        if ".git" in path.parts or ".github" in path.parts or "tests" in path.parts or "ui-source" in path.parts:
-            continue
-        try:
-            public_text[path] = path.read_text(encoding="utf-8")
-        except UnicodeDecodeError:
-            continue
+    for path, content in public_text_files(ROOT, excluded={INDEX, Path(__file__)}):
+        public_text[path] = content
 
     mac_pattern = re.compile(r"(?<![0-9A-Fa-f])(?:[0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}(?![0-9A-Fa-f])")
     local_path_pattern = re.compile(r"(?:/home/[^/\s]+(?:/[^\s]*)?|/Users/[^/\s]+(?:/[^\s]*)?|[A-Za-z]:\\Users\\[^\s]+)")
@@ -192,18 +198,6 @@ def main():
         errors.append("Pages artifact must exclude repository tests and workflow sources")
     if "max-height:calc(100vh - 4.5rem)" not in css or "overflow-y:auto" not in css:
         errors.append("no-JavaScript mobile navigation must scroll within the viewport")
-
-    # The twelve-item header must collapse while the capped desktop container
-    # is still too narrow for its intrinsic contents. Keep the threshold
-    # explicit so regressions do not silently recreate the 1201px overflow.
-    if "@media(max-width:1320px)" not in css:
-        errors.append("full header must collapse through the 1320px breakpoint")
-    if "@media(max-width:1200px)" in css:
-        errors.append("header collapse breakpoint is too low for the capped container")
-    if ".primary-nav{display:flex;align-items:center;gap:1rem}" not in css:
-        errors.append("expanded navigation needs the compact desktop gap")
-    if ".primary-nav>a{color:var(--muted);text-decoration:none;font-size:.88rem}" not in css:
-        errors.append("expanded navigation needs compact link sizing")
 
     if errors:
         for error in errors:

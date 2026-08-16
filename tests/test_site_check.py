@@ -3,6 +3,7 @@
 import importlib.util
 from pathlib import Path
 import re
+import tempfile
 import unittest
 
 
@@ -26,6 +27,21 @@ class PrivateIpLiteralTests(unittest.TestCase):
 
         self.assertEqual(site_check.private_ip_literals(content), [])
 
+    def test_rejects_private_ipv4_ranges_beyond_literal_placeholders(self):
+        content = "private 10.42.0.5 and 172.31.2.4 and 192.168.44.9"
+
+        self.assertEqual(
+            site_check.private_ip_literals(content),
+            ["10.42.0.5", "172.31.2.4", "192.168.44.9"],
+        )
+
+    def test_rejects_mac_and_local_path_patterns(self):
+        mac = re.compile(r"(?<![0-9A-Fa-f])(?:[0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}(?![0-9A-Fa-f])")
+        local_path = re.compile(r"(?:/home/[^/\\s]+(?:/[^\\s]*)?|/Users/[^/\\s]+(?:/[^\\s]*)?|[A-Za-z]:\\\\Users\\\\[^\\s]+)")
+
+        self.assertIsNotNone(mac.search("aa:bb:cc:dd:ee:ff"))
+        self.assertIsNotNone(local_path.search("/home/alice/private/manifest.json"))
+
     def test_rendered_ui_gate_rejects_ipv6_ula_and_link_local_values(self):
         workflow = (site_check.ROOT / ".github/workflows/pages.yml").read_text(
             encoding="utf-8"
@@ -40,6 +56,16 @@ class PrivateIpLiteralTests(unittest.TestCase):
         )
         for value in ("fd12::1", "FE80::1"):
             self.assertIsNotNone(rendered_ipv6.search(value), value)
+
+    def test_public_text_scan_includes_extensionless_files(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            license_file = root / "LICENSE"
+            license_file.write_text("support endpoint: 10.42.0.5\n", encoding="utf-8")
+
+            files = dict(site_check.public_text_files(root))
+
+        self.assertEqual(site_check.private_ip_literals(files[license_file]), ["10.42.0.5"])
 
 
 if __name__ == "__main__":
