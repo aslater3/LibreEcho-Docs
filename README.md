@@ -43,7 +43,23 @@ The repository-native SVG artwork lives in `assets/images/`. It is deliberately 
 python3 -m http.server 8000
 ```
 
-Open `http://localhost:8000`.
+Open `http://localhost:8000`. The production site keeps the onboarding, support,
+privacy, release, licensing and contribution guidance on one navigable page so a
+new visitor can reach each route from the header without relying on JavaScript.
+The browser-local Control Centre demonstration remains a separate development
+site in `aslater3/LibreEcho-Docs-dev`.
+
+## Tests
+
+Run the deterministic static contract check before opening a pull request:
+
+```bash
+python3 tests/site-check.py
+```
+
+The check validates required sections, in-page links, local assets, public release
+filenames, maintained review date, and rejection of stale GitHub placeholders or
+private device/network data.
 
 ## Project status language
 
