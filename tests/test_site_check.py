@@ -75,6 +75,26 @@ class PrivateIpLiteralTests(unittest.TestCase):
 
         self.assertEqual(site_check.private_ip_literals(files[license_file]), ["10.42.0.5"])
 
+    def test_hero_keeps_selling_point_bubbles(self):
+        source = (site_check.ROOT / "index.html").read_text(encoding="utf-8")
+        self.assertEqual(source.count("status-card status-card-"), 5)
+        for needle in (
+            "status-card-top",
+            "status-card-topleft",
+            "status-card-midright",
+            "status-card-bottom",
+            "status-card-bottomright",
+        ):
+            self.assertIn(needle, source)
+        for selling_point in (
+            "AirPlay, now supported",
+            "No cloud account needed",
+            "Music equalizer built in",
+            "Local-first voice control",
+            "No subscription, ever",
+        ):
+            self.assertIn(selling_point, source)
+
 
 if __name__ == "__main__":
     unittest.main()
