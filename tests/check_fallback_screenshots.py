@@ -2,47 +2,27 @@
 """OCR-based privacy gate for committed GitHub Pages fallback screenshots."""
 from __future__ import annotations
 
-import ipaddress
-import re
+import importlib.util
 import subprocess
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+CHECK = ROOT / "tests/site-check.py"
+SPEC = importlib.util.spec_from_file_location("site_check", CHECK)
+if SPEC is None or SPEC.loader is None:
+    raise RuntimeError("unable to load the shared site privacy checker")
+site_check = importlib.util.module_from_spec(SPEC)
+SPEC.loader.exec_module(site_check)
+
 IMAGES = (
     ROOT / "assets/images/ui-dashboard.png",
     ROOT / "assets/images/ui-system.png",
 )
 
-IPV4_PATTERN = re.compile(r"(?<![\d.])(?:\d{1,3}\.){3}\d{1,3}(?![\d.])")
-IPV6_PATTERN = re.compile(
-    r"(?<![0-9A-Fa-f:])(?:[0-9A-Fa-f]{0,4}:){2,7}[0-9A-Fa-f]{0,4}(?![0-9A-Fa-f:])"
-)
-MAC_PATTERN = re.compile(
-    r"(?<![0-9A-Fa-f])(?:[0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}(?![0-9A-Fa-f])"
-)
-LOCAL_PATH_PATTERN = re.compile(
-    r"(?:/home/[^/\s]+(?:/[^\s]*)?|/Users/[^/\s]+(?:/[^\s]*)?|[A-Za-z]:\\Users\\[^\s]+)"
-)
-DEVICE_ID_PATTERN = re.compile(
-    r"(?:LibreEcho[-_]\d{4,}|\b\d{8}T\d{6}Z-[0-9A-Fa-f]{8,}|\b[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{8,})"
-)
-KERNEL_ID_PATTERN = re.compile(r"\bg\w{7,}-dirty\b")
-
 
 def private_ips(text: str) -> list[str]:
-    values = IPV4_PATTERN.findall(text) + IPV6_PATTERN.findall(text)
-    result: list[str] = []
-    for value in values:
-        if value == "::":
-            continue
-        try:
-            address = ipaddress.ip_address(value)
-        except ValueError:
-            continue
-        if address.is_private and not address.is_loopback:
-            result.append(value)
-    return result
+    return site_check.private_ip_literals(text)
 
 
 def ocr(path: Path) -> str:
@@ -69,13 +49,13 @@ def main() -> int:
         text = ocr(image)
         for value in private_ips(text):
             failures.append(f"private IP in {image.name}: {value}")
-        if MAC_PATTERN.search(text):
+        if site_check.MAC_PATTERN.search(text):
             failures.append(f"MAC address in {image.name}")
-        if LOCAL_PATH_PATTERN.search(text):
+        if site_check.LOCAL_PATH_PATTERN.search(text):
             failures.append(f"local filesystem path in {image.name}")
-        if DEVICE_ID_PATTERN.search(text):
+        if site_check.DEVICE_ID_PATTERN.search(text):
             failures.append(f"device/build identifier in {image.name}")
-        if KERNEL_ID_PATTERN.search(text):
+        if site_check.KERNEL_ID_PATTERN.search(text):
             failures.append(f"dirty kernel identifier in {image.name}")
 
     if failures:
