@@ -4,11 +4,8 @@ Static GitHub Pages site for **LibreEcho**, an open operating system and hardwar
 
 ## Publish
 
-1. Create an empty GitHub repository.
-2. Extract this archive and copy its contents into the repository root.
-3. This is the public product site. Development documentation and the browser demo live in `aslater3/LibreEcho-Docs-dev`.
-4. Commit and push to the `main` branch.
-5. In **Settings → Pages**, select **GitHub Actions** as the source.
+This is the public product site, deployed from the `main` branch. Development
+documentation and the browser demo live in `aslater3/LibreEcho-Docs-dev`.
 
 The included workflow publishes the site automatically on every push to `main`.
 It also runs every six hours and checks out the latest
