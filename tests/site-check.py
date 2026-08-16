@@ -68,6 +68,12 @@ IPV4_PATTERN = re.compile(r"(?<![\d.])(?:\d{1,3}\.){3}\d{1,3}(?![\d.])")
 IPV6_PATTERN = re.compile(
     r"(?<![0-9A-Fa-f:])(?:[0-9A-Fa-f]{0,4}:){2,7}[0-9A-Fa-f]{0,4}(?![0-9A-Fa-f:])"
 )
+MAC_PATTERN = re.compile(
+    r"(?<![0-9A-Fa-f])(?:[0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}(?![0-9A-Fa-f])"
+)
+LOCAL_PATH_PATTERN = re.compile(
+    r"(?:/home/[^/\s]+(?:/[^\s]*)?|/Users/[^/\s]+(?:/[^\s]*)?|[A-Za-z]:\\Users\\[^\s]+)"
+)
 
 
 def private_ip_literals(content):
@@ -122,8 +128,6 @@ def main():
     for path, content in public_text_files(ROOT, excluded={INDEX, Path(__file__)}):
         public_text[path] = content
 
-    mac_pattern = re.compile(r"(?<![0-9A-Fa-f])(?:[0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}(?![0-9A-Fa-f])")
-    local_path_pattern = re.compile(r"(?:/home/[^/\s]+(?:/[^\s]*)?|/Users/[^/\s]+(?:/[^\s]*)?|[A-Za-z]:\\Users\\[^\s]+)")
     for path, content in public_text.items():
         for needle in FORBIDDEN_TEXT:
             if needle in content:
@@ -132,9 +136,9 @@ def main():
             address = ipaddress.ip_address(value)
             family = "IPv6" if address.version == 6 else "IPv4"
             errors.append(f"private {family} address present in {path.relative_to(ROOT)}: {value}")
-        if mac_pattern.search(content):
+        if MAC_PATTERN.search(content):
             errors.append(f"MAC address present in {path.relative_to(ROOT)}")
-        if local_path_pattern.search(content):
+        if LOCAL_PATH_PATTERN.search(content):
             errors.append(f"local filesystem path present in {path.relative_to(ROOT)}")
 
     for href in parser.links:

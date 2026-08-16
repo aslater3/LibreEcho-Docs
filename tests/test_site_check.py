@@ -36,11 +36,10 @@ class PrivateIpLiteralTests(unittest.TestCase):
         )
 
     def test_rejects_mac_and_local_path_patterns(self):
-        mac = re.compile(r"(?<![0-9A-Fa-f])(?:[0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}(?![0-9A-Fa-f])")
-        local_path = re.compile(r"(?:/home/[^/\\s]+(?:/[^\\s]*)?|/Users/[^/\\s]+(?:/[^\\s]*)?|[A-Za-z]:\\\\Users\\\\[^\\s]+)")
-
-        self.assertIsNotNone(mac.search("aa:bb:cc:dd:ee:ff"))
-        self.assertIsNotNone(local_path.search("/home/alice/private/manifest.json"))
+        self.assertIsNotNone(site_check.MAC_PATTERN.search("aa:bb:cc:dd:ee:ff"))
+        self.assertIsNotNone(
+            site_check.LOCAL_PATH_PATTERN.search("/home/alice/private/manifest.json")
+        )
 
     def test_rendered_ui_gate_rejects_ipv6_ula_and_link_local_values(self):
         workflow = (site_check.ROOT / ".github/workflows/pages.yml").read_text(
