@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://aslater3.github.io/LibreEcho-Docs-dev/sitemap.xml
+Sitemap: https://libreecho.org/sitemap.xml
