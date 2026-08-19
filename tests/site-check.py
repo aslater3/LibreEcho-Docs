@@ -19,8 +19,9 @@ REQUIRED_IDS = {
 REQUIRED_TEXT = [
     "Developer Preview preparation",
     "Open Beta has not launched",
-    "LibreEcho radar-puffin v0.1.0",
-    "libreecho-radar-puffin-v0.1.0-SHA256SUMS",
+    "Releases are being refreshed",
+    "There are no public downloads available right now",
+    "actively working on a one-shot installer",
     "physical mute is not a beta-supported privacy guarantee",
     "browser-local simulation",
 ]
@@ -161,35 +162,8 @@ def main():
         if asset.startswith(("assets/", "./")) and not (ROOT / asset.removeprefix("./")).is_file():
             errors.append(f"missing document asset: {asset}")
 
-    for expected in [
-        "libreecho-radar-puffin-v0.1.0-boot.img",
-        "libreecho-radar-puffin-v0.1.0.ota.tar",
-        "libreecho-radar-puffin-v0.1.0-SHA256SUMS",
-        "libreecho-radar-puffin-v0.1.0-ota-public-key.hex",
-    ]:
-        if expected not in source:
-            errors.append(f"release inventory omits {expected}")
-
     if not re.search(r'<time datetime="2026-08-15">15 August 2026</time>', source):
         errors.append("maintained review date is missing or inconsistent")
-
-    release_base = "https://github.com/aslater3/LibreEcho/releases/download"
-    release_assets = [
-        "libreecho-radar-puffin-v0.1.0-boot.img",
-        "libreecho-radar-puffin-v0.1.0.ota.tar",
-        "libreecho-radar-puffin-v0.1.0-SHA256SUMS",
-        "libreecho-radar-puffin-v0.1.0-ota-public-key.hex",
-        "libreecho-radar-puffin-v0.1.0-release-notes.md",
-    ]
-    for asset in release_assets:
-        immutable_href = f"{release_base}/v0.1.0/{asset}"
-        moving_href = f"{release_base}/latest/{asset}"
-        if immutable_href not in parser.links:
-            errors.append(f"release asset is not pinned to v0.1.0: {asset}")
-        if moving_href in parser.links:
-            errors.append(f"release asset uses moving latest tag: {asset}")
-    if "https://github.com/aslater3/LibreEcho/releases/tag/latest" not in parser.links:
-        errors.append("release inventory must keep latest only for the channel link")
 
     if 'href="#security">Support</a>' not in source:
         errors.append("header Support link must route to support guidance")
