@@ -13,6 +13,7 @@ SCRIPT = ROOT / "assets/js/site.js"
 PAGES_WORKFLOW = ROOT / ".github/workflows/pages.yml"
 
 REQUIRED_IDS = {
+    "hardware-roadmap",
     "top", "progress", "features", "hardware", "install", "demo",
     "privacy", "releases", "security", "licensing", "tester", "contribute",
 }
@@ -22,6 +23,8 @@ REQUIRED_TEXT = [
     "Releases are being refreshed",
     "There are no public downloads available right now",
     "actively working on a one-shot installer",
+    "One platform today. More hardware next.",
+    "Suggested porting priority",
     "physical mute is not a beta-supported privacy guarantee",
     "browser-local simulation",
 ]
