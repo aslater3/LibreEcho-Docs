@@ -9,6 +9,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 INDEX = ROOT / "index.html"
 CSS = ROOT / "assets/css/site.css"
+ROADMAP_CSS = ROOT / "assets/css/roadmap.css"
 SCRIPT = ROOT / "assets/js/site.js"
 PAGES_WORKFLOW = ROOT / ".github/workflows/pages.yml"
 
@@ -24,6 +25,8 @@ REQUIRED_TEXT = [
     "There are no public downloads available right now",
     "actively working on a one-shot installer",
     "One platform today. More hardware next.",
+    "Research candidate",
+    "MT8183/Amazon LK groundwork",
     "Suggested porting priority",
     "physical mute is not a beta-supported privacy guarantee",
     "browser-local simulation",
@@ -118,6 +121,7 @@ def public_text_files(root, excluded=None):
 def main():
     source = INDEX.read_text(encoding="utf-8")
     css = CSS.read_text(encoding="utf-8")
+    roadmap_css = ROADMAP_CSS.read_text(encoding="utf-8")
     script = SCRIPT.read_text(encoding="utf-8")
     pages_workflow = PAGES_WORKFLOW.read_text(encoding="utf-8")
     parser = SiteParser()
@@ -175,6 +179,8 @@ def main():
         errors.append("hardware roadmap matrix must be collapsed behind an accessible details disclosure")
     if "@media(max-width:1400px){.primary-nav" not in css:
         errors.append("header collapse breakpoint must accommodate the roadmap navigation link")
+    if ".status-research" not in roadmap_css:
+        errors.append("research-candidate status needs a distinct visual treatment")
     if '<html lang="en-GB" class="no-js">' not in source:
         errors.append("document does not provide the no-js progressive-enhancement marker")
     if 'document.documentElement.classList.replace("no-js", "js");' not in script:
