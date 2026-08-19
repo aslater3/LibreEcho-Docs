@@ -14,9 +14,9 @@ class HeaderResponsiveTests(unittest.TestCase):
         if match is None:
             self.fail("header collapse media query is missing")
         breakpoint = int(match.group(1))
-        # The 12-item header (including the donation button) measures about
-        # 1335px at its intrinsic width, so collapse must engage above that.
-        self.assertGreaterEqual(breakpoint, 1335)
+        # The 14-item header (including the donation button and roadmap link)
+        # needs the wider breakpoint to avoid intrinsic-width overflow.
+        self.assertGreaterEqual(breakpoint, 1400)
         self.assertLessEqual(breakpoint, 1400)
 
     def test_expanded_header_uses_compact_intrinsic_sizing(self):

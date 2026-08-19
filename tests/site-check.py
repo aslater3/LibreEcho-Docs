@@ -171,7 +171,10 @@ def main():
     if 'href="#security">Support</a>' not in source:
         errors.append("header Support link must route to support guidance")
 
-    # Mobile navigation must remain reachable when JavaScript is unavailable.
+    if "<details class=\"roadmap-disclosure\">" not in source or "Show the full hardware compatibility matrix" not in source:
+        errors.append("hardware roadmap matrix must be collapsed behind an accessible details disclosure")
+    if "@media(max-width:1400px){.primary-nav" not in css:
+        errors.append("header collapse breakpoint must accommodate the roadmap navigation link")
     if '<html lang="en-GB" class="no-js">' not in source:
         errors.append("document does not provide the no-js progressive-enhancement marker")
     if 'document.documentElement.classList.replace("no-js", "js");' not in script:
