@@ -61,6 +61,7 @@ private device/network data.
 ## Project status language
 
 The current project line is Linux 6.1 on MT8163 ARM32, with separate product
-tooling and UI repositories. It is active development, not a stable public OTA
-release. Keep this site high-level and do not publish device identifiers,
-private run manifests, serials, MAC addresses, or local paths.
+and UI repositories. Stable release `radar-puffin-v0.13.10` is public for
+supported Echo 2nd Gen hardware; Open Beta and other targets remain unsupported.
+Keep this site high-level and do not publish device identifiers, private run
+manifests, serials, MAC addresses, or local paths.

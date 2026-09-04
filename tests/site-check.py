@@ -19,11 +19,11 @@ REQUIRED_IDS = {
     "privacy", "releases", "security", "licensing", "tester", "contribute",
 }
 REQUIRED_TEXT = [
-    "Developer Preview preparation",
+    "Stable release 0.13.10 available",
     "Open Beta has not launched",
-    "Releases are being refreshed",
-    "There are no public downloads available right now",
-    "actively working on a one-shot installer",
+    "LibreEcho radar-puffin v0.13.10",
+    "Installation is available for supported hardware",
+    "0.13.10 Echo 2nd Gen one-shot installation guide",
     "One platform today. More hardware next.",
     "Research candidate",
     "MT8183/Amazon LK groundwork",
@@ -169,8 +169,32 @@ def main():
         if asset.startswith(("assets/", "./")) and not (ROOT / asset.removeprefix("./")).is_file():
             errors.append(f"missing document asset: {asset}")
 
-    if not re.search(r'<time datetime="2026-08-15">15 August 2026</time>', source):
+    if not re.search(r'<time datetime="2026-09-04">4 September 2026</time>', source):
         errors.append("maintained review date is missing or inconsistent")
+
+    release_tag = "radar-puffin-v0.13.10"
+    release_base = f"https://github.com/aslater3/LibreEcho/releases/download/{release_tag}"
+    release_assets = [
+        "libreecho-radar-puffin-v0.13.10-initial-install.tar",
+        "libreecho-radar-puffin-v0.13.10-run-one-shot.sh",
+        "libreecho-radar-puffin-v0.13.10.ota.tar",
+        "libreecho-radar-puffin-v0.13.10-SHA256SUMS",
+        "libreecho-radar-puffin-v0.13.10-ota-public-key.hex",
+        "libreecho-radar-puffin-v0.13.10-release-notes.md",
+    ]
+    for asset in release_assets:
+        immutable_href = f"{release_base}/{asset}"
+        if immutable_href not in parser.links:
+            errors.append(f"release asset is not linked for {release_tag}: {asset}")
+        moving_href = f"https://github.com/aslater3/LibreEcho/releases/download/latest/{asset}"
+        if moving_href in parser.links:
+            errors.append(f"release asset uses moving latest tag: {asset}")
+
+    install_guide = f"https://github.com/aslater3/LibreEcho/blob/{release_tag}/docs/install/README.md"
+    if install_guide not in parser.links:
+        errors.append("installation guide is not pinned to the current stable release")
+    if f"https://github.com/aslater3/LibreEcho/releases/tag/{release_tag}" not in parser.links:
+        errors.append("current stable release page is not linked")
 
     if 'href="#security">Support</a>' not in source:
         errors.append("header Support link must route to support guidance")
