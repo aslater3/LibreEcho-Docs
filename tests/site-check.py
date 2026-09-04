@@ -186,7 +186,7 @@ def main():
         immutable_href = f"{release_base}/{asset}"
         if immutable_href not in parser.links:
             errors.append(f"release asset is not linked for {release_tag}: {asset}")
-        moving_href = f"https://github.com/aslater3/LibreEcho/releases/download/latest/{asset}"
+        moving_href = f"https://github.com/aslater3/LibreEcho/releases/latest/download/{asset}"
         if moving_href in parser.links:
             errors.append(f"release asset uses moving latest tag: {asset}")
 
