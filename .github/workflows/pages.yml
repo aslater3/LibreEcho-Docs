@@ -1,6 +1,8 @@
 name: Deploy GitHub Pages
 
 on:
+  pull_request:
+    branches: [main]
   push:
     branches: [main]
   schedule:
@@ -115,6 +117,7 @@ jobs:
           path: ${{ runner.temp }}/site
 
   deploy:
+    if: github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-latest
     environment:
