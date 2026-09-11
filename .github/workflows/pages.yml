@@ -47,6 +47,10 @@ jobs:
       - name: Start UI demo server
         if: steps.ui_checkout.outcome == 'success'
         run: |
+          # Mark setup complete so the server serves the Control Centre at "/"
+          # instead of the first-run setup wizard (same marker the UI test
+          # harness writes next to its config file).
+          touch "$RUNNER_TEMP/libreecho-demo-config.json.setup-complete"
           ./ui-source/build/libreecho-web --backend mock --web-root ./ui-source/web \
             --listen 127.0.0.1:18080 --mock-config ./ui-source/config/mock-state.json \
             --config "$RUNNER_TEMP/libreecho-demo-config.json" --seed 42 --dev-controls \
