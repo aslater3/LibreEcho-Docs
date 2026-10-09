@@ -14,16 +14,17 @@ SCRIPT = ROOT / "assets/js/site.js"
 PAGES_WORKFLOW = ROOT / ".github/workflows/pages.yml"
 
 REQUIRED_IDS = {
+    "advisories",
     "hardware-roadmap",
     "top", "progress", "features", "hardware", "install", "demo",
     "privacy", "releases", "security", "licensing", "tester", "contribute",
 }
 REQUIRED_TEXT = [
-    "Stable release 0.13.15 available",
+    "Stable release 0.13.19 available",
     "Open Beta has not launched",
-    "LibreEcho radar-puffin v0.13.15",
+    "LibreEcho radar-puffin v0.13.19",
     "Installation is available for supported hardware",
-    "0.13.15 Echo 2nd Gen one-shot installation guide",
+    "0.13.19 Echo 2nd Gen one-shot installation guide",
     "One platform today. More hardware next.",
     "Research candidate",
     "MT8183/Amazon LK groundwork",
@@ -169,18 +170,18 @@ def main():
         if asset.startswith(("assets/", "./")) and not (ROOT / asset.removeprefix("./")).is_file():
             errors.append(f"missing document asset: {asset}")
 
-    if not re.search(r'<time datetime="2026-09-11">11 September 2026</time>', source):
+    if not re.search(r'<time datetime="2026-10-09">9 October 2026</time>', source):
         errors.append("maintained review date is missing or inconsistent")
 
-    release_tag = "radar-puffin-v0.13.15"
+    release_tag = "radar-puffin-v0.13.19"
     release_base = f"https://github.com/aslater3/LibreEcho/releases/download/{release_tag}"
     release_assets = [
-        "libreecho-radar-puffin-v0.13.15-initial-install.tar",
-        "libreecho-radar-puffin-v0.13.15-run-one-shot.sh",
-        "libreecho-radar-puffin-v0.13.15.ota.tar",
-        "libreecho-radar-puffin-v0.13.15-SHA256SUMS",
-        "libreecho-radar-puffin-v0.13.15-ota-public-key.hex",
-        "libreecho-radar-puffin-v0.13.15-release-notes.md",
+        "libreecho-radar-puffin-v0.13.19-initial-install.tar",
+        "libreecho-radar-puffin-v0.13.19-run-one-shot.sh",
+        "libreecho-radar-puffin-v0.13.19.ota.tar",
+        "libreecho-radar-puffin-v0.13.19-SHA256SUMS",
+        "libreecho-radar-puffin-v0.13.19-ota-public-key.hex",
+        "libreecho-radar-puffin-v0.13.19-release-notes.md",
     ]
     for asset in release_assets:
         immutable_href = f"{release_base}/{asset}"
