@@ -15,22 +15,23 @@ PAGES_WORKFLOW = ROOT / ".github/workflows/pages.yml"
 
 REQUIRED_IDS = {
     "advisories",
-    "hardware-roadmap",
+    "roadmap", "release-014",
     "top", "progress", "features", "hardware", "install", "demo",
-    "privacy", "releases", "security", "licensing", "tester", "contribute",
+    "privacy", "releases", "security", "licensing", "contribute",
 }
 REQUIRED_TEXT = [
-    "Stable release 0.13.19 available",
-    "Open Beta has not launched",
-    "LibreEcho radar-puffin v0.13.19",
-    "Installation is available for supported hardware",
-    "0.13.19 Echo 2nd Gen one-shot installation guide",
-    "One platform today. More hardware next.",
-    "Research candidate",
-    "MT8183/Amazon LK groundwork",
-    "Suggested porting priority",
-    "physical mute is not a beta-supported privacy guarantee",
-    "browser-local simulation",
+    "LibreEcho 0.13.19 is available now",
+    "LibreEcho 0.13.19",
+    "Please read before installing",
+    "0.13.19 Echo 2nd Gen installation guide",
+    "What’s new in LibreEcho 0.14",
+    "Echo Dot 2nd Gen support",
+    "0.14 isn’t available to download yet",
+    "Under research",
+    "Show the full device list",
+    "haven’t yet verified the mute button as a hardware-level guarantee",
+    "Anonymous check-in (from 0.14)",
+    "runs entirely in your browser",
 ]
 FORBIDDEN_TEXT = [
     'href="https://github.com/"',
@@ -200,7 +201,7 @@ def main():
     if 'href="#security">Support</a>' not in source:
         errors.append("header Support link must route to support guidance")
 
-    if "<details class=\"roadmap-disclosure\">" not in source or "Show the full hardware compatibility matrix" not in source:
+    if "<details class=\"roadmap-disclosure\">" not in source or "Show the full device list" not in source:
         errors.append("hardware roadmap matrix must be collapsed behind an accessible details disclosure")
     if "@media(max-width:1400px){.primary-nav" not in css:
         errors.append("header collapse breakpoint must accommodate the roadmap navigation link")

@@ -89,7 +89,7 @@ class PrivateIpLiteralTests(unittest.TestCase):
         for selling_point in (
             "AirPlay, now supported",
             "No cloud account needed",
-            "Music equalizer built in",
+            "Music equaliser built in",
             "Local-first voice control",
             "No subscription, ever",
         ):
