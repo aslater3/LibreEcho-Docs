@@ -215,9 +215,13 @@ def main():
     if not install_section or install_section.group(0).find('id="web-installer"') > install_section.group(0).find('class="steps-grid"'):
         errors.append("browser installer must come first in the install section")
 
-    install_guide = f"https://github.com/aslater3/LibreEcho/blob/{release_tag}/docs/install/README.md"
+    # The guide follows main: install procedures (USB pins, fastboot entry, Dot)
+    # are corrected after release, and a tag-pinned copy would serve stale steps.
+    install_guide = "https://github.com/aslater3/LibreEcho/blob/main/docs/install/README.md"
     if install_guide not in parser.links:
-        errors.append("installation guide is not pinned to the current stable release")
+        errors.append("installation guide must link to the maintained guide on main")
+    if re.search(r'LibreEcho/blob/radar-puffin-[^/"]+/docs/install/', source):
+        errors.append("installation guide must not be pinned to a release tag")
     if f"https://github.com/aslater3/LibreEcho/releases/tag/{release_tag}" not in parser.links:
         errors.append("current stable release page is not linked")
 
