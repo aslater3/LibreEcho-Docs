@@ -15,7 +15,7 @@ PAGES_WORKFLOW = ROOT / ".github/workflows/pages.yml"
 
 REQUIRED_IDS = {
     "advisories",
-    "roadmap", "release-014", "web-installer",
+    "roadmap", "release-014", "web-installer", "install-guide",
     "top", "progress", "features", "hardware", "install", "demo",
     "privacy", "releases", "security", "licensing", "contribute",
 }
@@ -27,7 +27,7 @@ REQUIRED_TEXT = [
     "What’s new in LibreEcho 0.14",
     "Echo Dot 2nd Gen support (experimental)",
     "Already running 0.13?",
-    "Try the browser installer",
+    "Try the browser installer first",
     "It hasn’t been fully tested yet.",
     "Under research",
     "Show the full device list",
@@ -206,9 +206,14 @@ def main():
     # must say plainly that it is not fully tested and not the recommended path.
     if "https://install.dev.libreecho.org/" not in parser.links:
         errors.append("browser installer preview is not linked")
-    web_section = re.search(r'<div id="web-installer".*?</div>', source, re.S)
-    if not web_section or "not fully tested" not in web_section.group(0) or "still the recommended way" not in web_section.group(0):
-        errors.append("browser installer section must be labelled as an untested preview")
+    # It is the first install option, so it must lead the install section and
+    # still point to the tested guide installer as the fallback.
+    web_section = re.search(r'<div id="web-installer".*?</div>\n', source, re.S)
+    if not web_section or "not fully tested" not in web_section.group(0) or "#install-guide" not in web_section.group(0):
+        errors.append("browser installer section must be labelled as an untested preview with a guide fallback")
+    install_section = re.search(r'<section id="install".*?</section>', source, re.S)
+    if not install_section or install_section.group(0).find('id="web-installer"') > install_section.group(0).find('class="steps-grid"'):
+        errors.append("browser installer must come first in the install section")
 
     install_guide = f"https://github.com/aslater3/LibreEcho/blob/{release_tag}/docs/install/README.md"
     if install_guide not in parser.links:
