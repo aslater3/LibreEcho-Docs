@@ -65,9 +65,12 @@ friendly second-person copy that says what works, what is experimental and what
 is coming next. Keep internal workflow detail (branch names, run IDs, CI states,
 private evidence) off the public page.
 
-Stable release `radar-puffin-v0.13.19` is public for the Amazon Echo 2nd Gen.
-LibreEcho 0.14 (adding the Echo Dot 2nd Gen) is described on the roadmap as in
-final testing and has no download links until it is published. When 0.14 ships,
-pin the release card, install section and `tests/site-check.py` to the new tag.
+Stable release `radar-puffin-v0.14.0` is public for the Amazon Echo 2nd Gen and,
+as an experimental target, the Echo Dot 2nd Gen. 0.13 devices cannot update to
+0.14 over the air and must reinstall. The browser installer at
+`install.dev.libreecho.org` is linked as a preview that has not been fully
+tested; keep the guide's host installer as the recommended route until the
+browser installer is validated. When the next release ships, pin the release
+card, install section and `tests/site-check.py` to the new tag.
 Do not publish device identifiers, private run manifests, serials, MAC
 addresses, or local paths.

@@ -15,18 +15,20 @@ PAGES_WORKFLOW = ROOT / ".github/workflows/pages.yml"
 
 REQUIRED_IDS = {
     "advisories",
-    "roadmap", "release-014",
+    "roadmap", "release-014", "web-installer",
     "top", "progress", "features", "hardware", "install", "demo",
     "privacy", "releases", "security", "licensing", "contribute",
 }
 REQUIRED_TEXT = [
-    "LibreEcho 0.13.19 is available now",
-    "LibreEcho 0.13.19",
+    "LibreEcho 0.14 is available now",
+    "LibreEcho 0.14.0",
     "Please read before installing",
-    "0.13.19 Echo 2nd Gen installation guide",
+    "0.14 installation guide",
     "What’s new in LibreEcho 0.14",
-    "Echo Dot 2nd Gen support",
-    "0.14 isn’t available to download yet",
+    "Echo Dot 2nd Gen support (experimental)",
+    "Already running 0.13?",
+    "Try the browser installer",
+    "It hasn’t been fully tested yet.",
     "Under research",
     "Show the full device list",
     "haven’t yet verified the mute button as a hardware-level guarantee",
@@ -40,6 +42,10 @@ FORBIDDEN_TEXT = [
     "10.0.",
     "172.16.",
     "G2A0RF",
+    "is in final testing",
+    "isn’t available to download yet",
+    "Coming in 0.14",
+    "radar-puffin-v0.13.19",
 ]
 
 class SiteParser(HTMLParser):
@@ -171,18 +177,22 @@ def main():
         if asset.startswith(("assets/", "./")) and not (ROOT / asset.removeprefix("./")).is_file():
             errors.append(f"missing document asset: {asset}")
 
-    if not re.search(r'<time datetime="2026-10-09">9 October 2026</time>', source):
+    if not re.search(r'<time datetime="2026-10-16">16 October 2026</time>', source):
         errors.append("maintained review date is missing or inconsistent")
 
-    release_tag = "radar-puffin-v0.13.19"
+    release_tag = "radar-puffin-v0.14.0"
     release_base = f"https://github.com/aslater3/LibreEcho/releases/download/{release_tag}"
     release_assets = [
-        "libreecho-radar-puffin-v0.13.19-initial-install.tar",
-        "libreecho-radar-puffin-v0.13.19-run-one-shot.sh",
-        "libreecho-radar-puffin-v0.13.19.ota.tar",
-        "libreecho-radar-puffin-v0.13.19-SHA256SUMS",
-        "libreecho-radar-puffin-v0.13.19-ota-public-key.hex",
-        "libreecho-radar-puffin-v0.13.19-release-notes.md",
+        f"libreecho-{target}-v0.14.0{suffix}"
+        for target in ("radar-puffin", "biscuit")
+        for suffix in (
+            "-initial-install.tar",
+            "-run-one-shot.sh",
+            ".ota.tar",
+            "-SHA256SUMS",
+            "-ota-public-key.hex",
+            "-release-notes.md",
+        )
     ]
     for asset in release_assets:
         immutable_href = f"{release_base}/{asset}"
@@ -191,6 +201,14 @@ def main():
         moving_href = f"https://github.com/aslater3/LibreEcho/releases/latest/download/{asset}"
         if moving_href in parser.links:
             errors.append(f"release asset uses moving latest tag: {asset}")
+
+    # The browser installer is a preview: it must be linked, and its section
+    # must say plainly that it is not fully tested and not the recommended path.
+    if "https://install.dev.libreecho.org/" not in parser.links:
+        errors.append("browser installer preview is not linked")
+    web_section = re.search(r'<div id="web-installer".*?</div>', source, re.S)
+    if not web_section or "not fully tested" not in web_section.group(0) or "still the recommended way" not in web_section.group(0):
+        errors.append("browser installer section must be labelled as an untested preview")
 
     install_guide = f"https://github.com/aslater3/LibreEcho/blob/{release_tag}/docs/install/README.md"
     if install_guide not in parser.links:
