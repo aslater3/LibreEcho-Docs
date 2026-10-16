@@ -48,14 +48,17 @@ jobs:
         run: python3 tests/check_fallback_screenshots.py
       - name: Build UI demo
         if: steps.ui_checkout.outcome == 'success'
-        run: make -C ui-source -j2
+        # Build only the web daemon the demo runs. The full UI build also links
+        # adapters (for example esphomed) that need a pinned mbedTLS toolchain
+        # this site does not use.
+        run: make -C ui-source -j2 CPPFLAGS=-DLE_DEV_CONTROLS=1 build/libreecho-web
       - name: Start UI demo server
         if: steps.ui_checkout.outcome == 'success'
         run: |
           # Mark setup complete so the server serves the Control Centre at "/"
           # instead of the first-run setup wizard (same marker the UI test
           # harness writes next to its config file).
-          touch "$RUNNER_TEMP/libreecho-demo-config.json.setup-complete"
+          printf 'schema=1\n' >"$RUNNER_TEMP/libreecho-demo-config.json.setup-complete"
           ./ui-source/build/libreecho-web --backend mock --web-root ./ui-source/web \
             --listen 127.0.0.1:18080 --mock-config ./ui-source/config/mock-state.json \
             --config "$RUNNER_TEMP/libreecho-demo-config.json" --seed 42 --dev-controls \
