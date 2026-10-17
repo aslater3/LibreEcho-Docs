@@ -66,8 +66,11 @@ is coming next. Keep internal workflow detail (branch names, run IDs, CI states,
 private evidence) off the public page.
 
 Stable release `radar-puffin-v0.14.0` is public for the Amazon Echo 2nd Gen and,
-as an experimental target, the Echo Dot 2nd Gen. 0.13 devices cannot update to
-0.14 over the air and must reinstall. The browser installer at
+as an experimental target, the Echo Dot 2nd Gen. 0.13 devices update to 0.14
+over the air through the `radar-puffin-v0.13.21` bridge release (install section,
+`#upgrade-from-013`); reinstalling remains the fallback. Keep that section's
+"Tested on real speakers: pending" note until the 0.13.21 release notes record
+hardware validation. The browser installer at
 `install.dev.libreecho.org` is linked as a preview that has not been fully
 tested; keep the guide's host installer as the recommended route until the
 browser installer is validated. When the next release ships, pin the release
