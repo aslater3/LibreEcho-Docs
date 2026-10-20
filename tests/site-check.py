@@ -21,7 +21,7 @@ REQUIRED_IDS = {
 }
 REQUIRED_TEXT = [
     "LibreEcho 0.14 is available now",
-    "LibreEcho 0.14.2",
+    "LibreEcho 0.14.3",
     "Please read before installing",
     "0.14 installation guide",
     "What’s new in LibreEcho 0.14",
@@ -180,10 +180,10 @@ def main():
     if not re.search(r'<time datetime="2026-10-16">16 October 2026</time>', source):
         errors.append("maintained review date is missing or inconsistent")
 
-    release_tag = "radar-puffin-v0.14.2"
+    release_tag = "radar-puffin-v0.14.3"
     release_base = f"https://github.com/aslater3/LibreEcho/releases/download/{release_tag}"
     release_assets = [
-        f"libreecho-{target}-v0.14.2{suffix}"
+        f"libreecho-{target}-v0.14.3{suffix}"
         for target in ("radar-puffin", "biscuit")
         for suffix in (
             "-initial-install.tar",
