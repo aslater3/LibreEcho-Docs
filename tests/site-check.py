@@ -15,12 +15,15 @@ PAGES_WORKFLOW = ROOT / ".github/workflows/pages.yml"
 
 REQUIRED_IDS = {
     "advisories",
-    "roadmap", "release-014", "web-installer", "install-guide",
+    "roadmap", "release-014", "release-0143", "maintainers", "web-installer", "install-guide",
     "top", "progress", "features", "hardware", "install", "demo",
     "privacy", "releases", "security", "licensing", "contribute",
 }
 REQUIRED_TEXT = [
     "LibreEcho 0.14 is available now",
+    "What’s new in LibreEcho 0.14.3",
+    "Multi-room audio with Sendspin",
+    "We’re looking for maintainers and contributors",
     "LibreEcho 0.14.3",
     "Please read before installing",
     "0.14 installation guide",
@@ -177,7 +180,7 @@ def main():
         if asset.startswith(("assets/", "./")) and not (ROOT / asset.removeprefix("./")).is_file():
             errors.append(f"missing document asset: {asset}")
 
-    if not re.search(r'<time datetime="2026-10-16">16 October 2026</time>', source):
+    if not re.search(r'<time datetime="2026-10-20">20 October 2026</time>', source):
         errors.append("maintained review date is missing or inconsistent")
 
     release_tag = "radar-puffin-v0.14.3"
