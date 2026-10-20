@@ -76,6 +76,15 @@ screenshots with its build and Playwright steps, and deploys the resulting Pages
 artifact. Do not claim that external workflow, CI, screenshot, or deployment
 evidence from a local check. Run `git diff --check` before committing.
 
+## Release updates
+
+When a LibreEcho release ships, follow step 5 (documentation sync) of the
+Product [`docs/RELEASING.md`](https://github.com/aslater3/LibreEcho/blob/main/docs/RELEASING.md):
+pin the release card, install section, checksum filenames and
+`tests/site-check.py` to the new tag, keep install-guide links on
+`blob/main/docs/install/README.md`, and tick the website item in that
+release's *Release checklist* issue.
+
 ## Completion and publication gates
 
 Record the exact commit tested and the exact commands/results. A local commit is
