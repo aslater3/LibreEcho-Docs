@@ -17,7 +17,7 @@ REQUIRED_IDS = {
     "advisories",
     "roadmap", "release-014", "release-0143", "release-0144", "release-0145", "maintainers", "web-installer", "install-guide",
     "top", "progress", "features", "hardware", "install", "demo",
-    "privacy", "releases", "security", "licensing", "contribute",
+    "privacy", "releases", "security", "licensing", "credits", "contribute",
 }
 REQUIRED_TEXT = [
     "LibreEcho 0.14 is available now",
@@ -39,6 +39,7 @@ REQUIRED_TEXT = [
     "haven’t yet verified the mute button as a hardware-level guarantee",
     "Anonymous check-in (from 0.14)",
     "runs entirely in your browser",
+    "Roger Ortiz",
 ]
 FORBIDDEN_TEXT = [
     'href="https://github.com/"',
