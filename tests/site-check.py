@@ -15,18 +15,19 @@ PAGES_WORKFLOW = ROOT / ".github/workflows/pages.yml"
 
 REQUIRED_IDS = {
     "advisories",
-    "roadmap", "release-014", "release-0143", "release-0144", "release-0145", "maintainers", "web-installer", "install-guide",
+    "roadmap", "release-014", "release-0143", "release-0144", "release-0145", "release-0146", "maintainers", "web-installer", "install-guide",
     "top", "progress", "features", "hardware", "install", "demo",
     "privacy", "releases", "security", "licensing", "credits", "contribute",
 }
 REQUIRED_TEXT = [
     "LibreEcho 0.14 is available now",
+    "What’s new in LibreEcho 0.14.6",
     "What’s new in LibreEcho 0.14.5",
     "What’s new in LibreEcho 0.14.4",
     "What’s new in LibreEcho 0.14.3",
     "Multi-room audio with Sendspin",
     "We’re looking for maintainers and contributors",
-    "LibreEcho 0.14.5",
+    "LibreEcho 0.14.6",
     "Please read before installing",
     "0.14 installation guide",
     "What’s new in LibreEcho 0.14",
@@ -183,13 +184,13 @@ def main():
         if asset.startswith(("assets/", "./")) and not (ROOT / asset.removeprefix("./")).is_file():
             errors.append(f"missing document asset: {asset}")
 
-    if not re.search(r'<time datetime="2026-10-30">30 October 2026</time>', source):
+    if not re.search(r'<time datetime="2026-11-17">17 November 2026</time>', source):
         errors.append("maintained review date is missing or inconsistent")
 
-    release_tag = "radar-puffin-v0.14.5"
+    release_tag = "radar-puffin-v0.14.6"
     release_base = f"https://github.com/aslater3/LibreEcho/releases/download/{release_tag}"
     release_assets = [
-        f"libreecho-{target}-v0.14.5{suffix}"
+        f"libreecho-{target}-v0.14.6{suffix}"
         for target in ("radar-puffin", "biscuit")
         for suffix in (
             "-initial-install.tar",
